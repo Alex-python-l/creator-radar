@@ -1,0 +1,16 @@
+[Unit]
+Description=mkt - GeeLark TikTok account manager
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=exec
+User=root
+WorkingDirectory=/opt/mkt
+ExecStart=/opt/mkt/.venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 18080 --workers 1
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=30
+
+[Install]
+WantedBy=multi-user.target

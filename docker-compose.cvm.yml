@@ -1,0 +1,24 @@
+# CVM(1.15.155.204) 专用：只起 web。
+# PG 是手动 docker run 的 svm-postgres（已有数据），本 compose 不碰它。
+# web 走 host 网络直连 127.0.0.1:5432（PG 在 host 上仅本机监听）。
+# 真实 DATABASE_URL 放 /opt/svm/.env.cvm（不进 git）。
+services:
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+      args:
+        RELEASE_COMMIT: ${RELEASE_COMMIT:?export RELEASE_COMMIT to the exact git commit}
+    container_name: svm-web
+    restart: unless-stopped
+    network_mode: host
+    env_file:
+      - .env.cvm
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      # 必须 0.0.0.0:Next standalone 配置具体 hostname 后,redirect 的
+      # Location 会无视 Host 头改用该值(127.0.0.1→"localhost:3000"),
+      # locale/登录跳转全坏。3000 不暴露公网靠 iptables(挡非 lo 入站)+安全组。
+      HOSTNAME: "0.0.0.0"
+      LOG_LEVEL: info

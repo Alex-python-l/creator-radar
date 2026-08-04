@@ -1,0 +1,36 @@
+# macOS
+.DS_Store
+
+# Secrets
+.env
+service_account.json
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+.venv.bak*/
+venv/
+env/
+data/
+frontend/node_modules/
+frontend/dist/
+frontend/.dev.vars
+frontend/.wrangler/
+
+# Visual brainstorming mockups (local only)
+.superpowers/
+
+# Local git worktrees — must never be tracked as submodules
+.claude/worktrees/
+
+# Local scheduled-tasks lock — runtime state, never commit
+.claude/scheduled_tasks.lock
+
+# Local UI inspiration research outputs
+ui-reference-board.md
+ui-reference-board.zh.md
+posthog-ui-reference.zh.md
+.ui-reference-assets/
+.firecrawl/

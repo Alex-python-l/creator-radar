@@ -1,0 +1,23 @@
+# 本地开发用（Mac）。CVM 上的 PG 是手动 docker run 起的、已有数据，
+# 不归这个 compose 管 —— CVM 部 web 用 docker-compose.cvm.yml。
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: svm-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: short_video_monitor
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d short_video_monitor"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  postgres_data:

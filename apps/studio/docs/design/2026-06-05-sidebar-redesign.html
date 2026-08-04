@@ -1,0 +1,403 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<title>Sidebar Redesign — Before / After</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --color-canvas: #f5f5f7;
+  --color-surface: #ffffff;
+  --color-line: #e5e5ea;
+  --color-line-strong: #d2d2d7;
+  --color-ink: #1d1d1f;
+  --color-ink-2: #424245;
+  --color-ink-3: #6e6e73;
+  --color-ink-4: #86868b;
+  --color-ink-5: #aeaeb2;
+  --color-blue: #0066cc;
+  --color-blue-bg: #eaf1fb;
+  --color-green: #248a3d;
+  --color-orange: #b25000;
+  --color-red: #d70015;
+  --color-gray-bg: #f0f0f3;
+  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", Helvetica, Arial, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body {
+  background: var(--color-canvas);
+  font-family: var(--font-sans);
+  color: var(--color-ink);
+  -webkit-font-smoothing: antialiased;
+}
+.stage {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 100vh;
+}
+.pane {
+  padding: 48px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  overflow: auto;
+}
+.pane + .pane { border-left: 1px solid var(--color-line); }
+.pane h2 {
+  font-size: 10.5px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  color: var(--color-ink-4);
+  margin: 0;
+}
+.pane .note {
+  font-size: 12px;
+  color: var(--color-ink-3);
+  margin: 0 0 8px;
+  max-width: 360px;
+  line-height: 1.55;
+}
+.app {
+  background: var(--color-canvas);
+  border: 1px solid var(--color-line);
+  border-radius: 6px;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: var(--sb-w) 1fr;
+  height: 560px;
+  box-shadow: 0 1px 2px rgba(0,0,0,.04);
+}
+.fake-main {
+  background: var(--color-canvas);
+  padding: 24px;
+  color: var(--color-ink-4);
+  font-size: 11.5px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+/* ───── BEFORE (current sidebar) ───── */
+.before .app { --sb-w: 232px; }
+.sb-before {
+  background: var(--color-surface);
+  border-right: 1px solid var(--color-line);
+  display: flex;
+  flex-direction: column;
+}
+.sb-before .brand {
+  padding: 24px 20px 28px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.sb-before .logo {
+  width: 32px; height: 32px;
+  border-radius: 9px;
+  background: linear-gradient(135deg,#7c52ff 0%,#4f21f3 100%);
+  box-shadow: 0 4px 12px rgba(79,33,243,0.22);
+}
+.sb-before .brand-text { font-size: 14px; font-weight: 600; letter-spacing: -0.01em; }
+.sb-before .brand-sub  { font-size: 11.5px; color: var(--color-ink-4); }
+.sb-before nav { padding: 0 12px; display: flex; flex-direction: column; gap: 2px; flex: 1; }
+.sb-before nav a {
+  display: flex; align-items: center; gap: 10px;
+  padding: 7px 12px;
+  border-radius: 8px;
+  font-size: 13.5px;
+  color: var(--color-ink-2);
+  text-decoration: none;
+}
+.sb-before nav a.active {
+  background: var(--color-blue-bg);
+  color: var(--color-blue);
+  font-weight: 500;
+}
+.sb-before .ic {
+  width: 16px; height: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-ink-3);
+}
+.sb-before nav a.active .ic { color: var(--color-blue); }
+.sb-before .foot {
+  padding: 16px 20px;
+  border-top: 1px solid var(--color-line);
+  display: flex;
+  justify-content: space-between;
+  font-size: 12.5px;
+  color: var(--color-ink-3);
+}
+
+/* ───── AFTER (industrial mono) ───── */
+.after .app { --sb-w: 220px; }
+.sb-after {
+  background: var(--color-surface);
+  border-right: 1px solid var(--color-line);
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font-mono);
+}
+.sb-after .brand {
+  padding: 20px 16px 24px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.sb-after .mark {
+  width: 10px; height: 10px;
+  background: var(--color-ink);
+  margin-top: 6px;
+  flex-shrink: 0;
+}
+.sb-after .wm {
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: var(--color-ink);
+  line-height: 1.3;
+}
+.sb-after .wm small {
+  display: block;
+  font-size: 10.5px;
+  color: var(--color-ink-4);
+  font-weight: 400;
+  margin-top: 3px;
+  letter-spacing: 0;
+}
+.sb-after nav {
+  padding: 0 8px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+.sb-after nav a {
+  display: grid;
+  grid-template-columns: 14px 1fr auto;
+  align-items: center;
+  gap: 10px;
+  padding: 0 10px;
+  height: 30px;
+  text-decoration: none;
+  font-size: 12.5px;
+  color: var(--color-ink-3);
+  position: relative;
+  transition: background-color 80ms ease, color 80ms ease;
+}
+.sb-after nav a:hover { background: var(--color-gray-bg); color: var(--color-ink-2); }
+.sb-after nav a.active {
+  color: var(--color-ink);
+  font-weight: 500;
+}
+.sb-after nav a.active::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 7px; bottom: 7px;
+  width: 2px;
+  background: var(--color-ink);
+}
+.sb-after .meta {
+  font-size: 11px;
+  color: var(--color-ink-4);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
+}
+.sb-after .meta.warn { color: var(--color-orange); }
+.sb-after .meta.dot {
+  width: 6px; height: 6px;
+  background: var(--color-green);
+  border-radius: 999px;
+  display: block;
+}
+.sb-after .ic svg { display: block; }
+.sb-after nav a.active .ic { color: var(--color-ink); }
+.sb-after nav a .ic { color: var(--color-ink-4); }
+
+.sb-after .foot {
+  padding: 12px 16px 14px;
+  border-top: 1px solid var(--color-line);
+  font-size: 11px;
+}
+.sb-after .hb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-ink-3);
+  padding-bottom: 10px;
+  font-variant-numeric: tabular-nums;
+}
+.sb-after .hb-dot {
+  width: 6px; height: 6px;
+  background: var(--color-green);
+  border-radius: 999px;
+  box-shadow: 0 0 0 2px rgba(36,138,61,0.12);
+}
+.sb-after .foot-row {
+  display: flex;
+  justify-content: space-between;
+  color: var(--color-ink-4);
+}
+.sb-after .foot-row a { color: var(--color-ink-3); text-decoration: none; }
+.sb-after .foot-row a:hover { color: var(--color-ink); }
+.sb-after .foot-row .pipe { color: var(--color-ink-5); padding: 0 4px; }
+
+/* Caption row under each pane */
+.callouts {
+  margin-top: 8px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 6px;
+  font-size: 11.5px;
+  color: var(--color-ink-3);
+  line-height: 1.5;
+}
+.callouts code {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  background: var(--color-gray-bg);
+  padding: 1px 5px;
+  border-radius: 3px;
+  color: var(--color-ink-2);
+}
+.callouts b { color: var(--color-ink); font-weight: 500; }
+</style>
+</head>
+<body>
+<div class="stage">
+
+  <!-- BEFORE -->
+  <section class="pane before">
+    <h2>before · current</h2>
+    <p class="note">紫渐变 logo + 通用 SaaS 模板结构 + 蓝色 active pill —— 见过 100 个相似产品。</p>
+    <div class="app">
+      <aside class="sb-before">
+        <div class="brand">
+          <div class="logo"></div>
+          <div>
+            <div class="brand-text">GeeLark Studio</div>
+            <div class="brand-sub">v0.6</div>
+          </div>
+        </div>
+        <nav>
+          <a class="active" href="#"><span class="ic">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+              <rect x="2" y="2" width="5.5" height="5.5" rx="1.5" stroke="currentColor" stroke-width="1.4"/>
+              <rect x="8.5" y="2" width="5.5" height="3.5" rx="1.5" stroke="currentColor" stroke-width="1.4"/>
+              <rect x="2" y="8.5" width="5.5" height="5.5" rx="1.5" stroke="currentColor" stroke-width="1.4"/>
+              <rect x="8.5" y="6.5" width="5.5" height="7.5" rx="1.5" stroke="currentColor" stroke-width="1.4"/>
+            </svg>
+          </span><span>Dashboard</span></a>
+          <a href="#"><span class="ic">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+              <circle cx="8" cy="6" r="2.8" stroke="currentColor" stroke-width="1.4"/>
+              <path d="M3 13.5c0-2.4 2.2-4 5-4s5 1.6 5 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+            </svg>
+          </span><span>Accounts</span></a>
+          <a href="#"><span class="ic">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+              <rect x="2" y="3.5" width="12" height="9" rx="1.6" stroke="currentColor" stroke-width="1.4"/>
+              <path d="M6.5 6.5L10 8 6.5 9.5z" fill="currentColor"/>
+            </svg>
+          </span><span>Videos</span></a>
+          <a href="#"><span class="ic">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+              <path d="M3 3.2h10a1.4 1.4 0 0 1 1.4 1.4v4.8a1.4 1.4 0 0 1-1.4 1.4H7.4L4.2 13v-2.2H3a1.4 1.4 0 0 1-1.4-1.4V4.6A1.4 1.4 0 0 1 3 3.2Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>
+              <path d="M5 6.2h6M5 8.4h3.8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+            </svg>
+          </span><span>Comments</span></a>
+          <a href="#"><span class="ic">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+              <circle cx="8" cy="8" r="2.2" stroke="currentColor" stroke-width="1.4"/>
+              <path d="M8 1.4v1.7M8 12.9v1.7M3.3 3.3l1.2 1.2M11.5 11.5l1.2 1.2M1.4 8h1.7M12.9 8h1.7M3.3 12.7l1.2-1.2M11.5 4.5l1.2-1.2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+            </svg>
+          </span><span>Settings</span></a>
+        </nav>
+        <div class="foot">
+          <span>中文</span>
+          <span>Sign out</span>
+        </div>
+      </aside>
+      <main class="fake-main">/dashboard</main>
+    </div>
+    <div class="callouts">
+      <div>· 紫色 <code>linear-gradient + shadow</code> 是 AI mockup 标配色谱</div>
+      <div>· active <code>bg-blue-bg + pill</code> 太"模板" </div>
+      <div>· 侧栏空间没承载任何动态信息</div>
+    </div>
+  </section>
+
+  <!-- AFTER -->
+  <section class="pane after">
+    <h2>after · industrial mono</h2>
+    <p class="note">等宽字体 + 直角 + 黑色 active 左标 + 状态点 —— 让侧栏从"装饰"变成"仪表"。</p>
+    <div class="app">
+      <aside class="sb-after">
+        <div class="brand">
+          <div class="mark"></div>
+          <div class="wm">
+            geelark.studio
+            <small>v0.6 · ops</small>
+          </div>
+        </div>
+        <nav>
+          <a class="active" href="#"><span class="ic">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.2">
+              <rect x="1" y="1" width="5" height="5"/>
+              <rect x="8" y="1" width="5" height="5"/>
+              <rect x="1" y="8" width="5" height="5"/>
+              <rect x="8" y="8" width="5" height="5"/>
+            </svg>
+          </span><span>dashboard</span><span></span></a>
+          <a href="#"><span class="ic">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.2">
+              <circle cx="7" cy="5" r="2.2"/>
+              <path d="M3 12 c0-2 2-3.4 4-3.4 s4 1.4 4 3.4"/>
+            </svg>
+          </span><span>accounts</span><span class="meta">42</span></a>
+          <a href="#"><span class="ic">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.2">
+              <rect x="1.5" y="3" width="11" height="8"/>
+              <path d="M6 6 L9 7 L6 8 Z" fill="currentColor" stroke="none"/>
+            </svg>
+          </span><span>videos</span><span class="meta warn">3 ↑</span></a>
+          <a href="#"><span class="ic">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.2">
+              <path d="M2 3 H12 a1 1 0 0 1 1 1 V9 a1 1 0 0 1 -1 1 H6 L3.5 12 V10 H2 a1 1 0 0 1 -1 -1 V4 a1 1 0 0 1 1 -1 Z"/>
+            </svg>
+          </span><span>comments</span><span class="meta dot"></span></a>
+          <a href="#"><span class="ic">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.2">
+              <circle cx="7" cy="7" r="2"/>
+              <path d="M7 1 V2.5 M7 11.5 V13 M2.5 2.5 L3.5 3.5 M10.5 10.5 L11.5 11.5 M1 7 H2.5 M11.5 7 H13 M2.5 11.5 L3.5 10.5 M10.5 3.5 L11.5 2.5" stroke-linecap="round"/>
+            </svg>
+          </span><span>settings</span><span></span></a>
+        </nav>
+        <div class="foot">
+          <div class="hb">
+            <span class="hb-dot"></span>
+            <span>worker · ok · 2m</span>
+          </div>
+          <div class="foot-row">
+            <a href="#">en · zh</a>
+            <a href="#">sign out</a>
+          </div>
+        </div>
+      </aside>
+      <main class="fake-main">/dashboard</main>
+    </div>
+    <div class="callouts">
+      <div>· <b>等宽字体</b> 直接喊出"我是工具"，不假装是消费品</div>
+      <div>· active 状态 = 左侧 2px 黑标 + ink-1 加重，<b>不</b>是蓝 pill</div>
+      <div>· nav 右侧承载实时数据：<code>accounts 42</code>、<code>videos 3↑</code>、<code>· (new)</code> </div>
+      <div>· 底部 worker 心跳 = 当前看不到的 mkt-worker 状态终于露脸</div>
+      <div>· wordmark <code>geelark.studio</code> + 黑方块 mark，干掉紫渐变</div>
+    </div>
+  </section>
+
+</div>
+</body>
+</html>

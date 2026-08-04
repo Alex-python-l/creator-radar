@@ -1,0 +1,22 @@
+# 国外机（107.174.1.82）专用。DATABASE_URL 经本机 autossh 隧道指向 127.0.0.1:5432
+# （隧道由 host 上的 systemd autossh 维持，连 CVM 的 svm-postgres）。
+services:
+  scraper:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        RELEASE_COMMIT: ${RELEASE_COMMIT:?export RELEASE_COMMIT to the exact git commit}
+    container_name: svm-scraper
+    restart: unless-stopped
+    # host 网络：直达本机 127.0.0.1:5432 的 autossh 隧道 + 干净出网
+    network_mode: host
+    env_file:
+      - .env
+    volumes:
+      # IG session(ig-instagrapi.json) + TikTok persistent profile 必须持久化
+      - ./data:/app/data
+    # /dev/shm 默认 64m，Chromium 会崩；小机不敢给太大
+    shm_size: "256m"
+    # /health 只绑本机，不对公网暴露
+    command: ["uv", "run", "uvicorn", "app.main:app", "--host", "127.0.0.1", "--port", "8000"]

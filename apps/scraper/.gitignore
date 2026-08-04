@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+*.py[cod]
+.ruff_cache/
+.mypy_cache/
+.pytest_cache/
+
+# 浏览器 profile / 登录态 / 设备指纹 — 不能 commit（含 cookies + 可能含密码相关 token）
+data/ig-profile/
+data/tk-profile/
+data/ig-instagrapi.json

@@ -1,0 +1,183 @@
+/* studio(运营模块)样式,自 apps/studio/frontend/src/index.css 迁入。
+   - radius/shadow token 改名避开 Tailwind 命名空间:同名 --radius-sm 等
+     会改写 rounded-sm、shadow-sm 这些工具类本身,波及 radar。
+   - 元素级规则(a 颜色/focus/cursor/selection)收在 [data-studio] 作用域,
+     portal 渲染的浮层(Drawer/Toast)需在容器上自带 data-studio。
+   - 滚动条美化保持全局:studio 页面滚动在 window 上,无法作用域化。 */
+
+@theme {
+  /* 扩展灰阶(radar 色相系派生) */
+  --color-foreground-2: #302d3d;
+  --color-muted-foreground-2: #918b9e;
+  --color-muted-foreground-3: #b1aaba;
+  --color-border-strong: #cfc6d9;
+
+  /* 状态色(green/orange 对齐 radar tier;蓝紫黄为 studio 信息色) */
+  --color-blue: #6750d9;
+  --color-blue-bg: #eee9fb;
+  --color-destructive-bg: hsl(0 84% 97%);
+  --color-green: hsl(142 71% 45%);
+  --color-green-bg: #ecfdf3;
+  --color-orange: hsl(38 92% 50%);
+  --color-orange-bg: #fff7ed;
+  --color-yellow: #a16207;
+  --color-yellow-bg: #fef3c7;
+  --color-purple: #6750d9;
+  --color-purple-bg: #eee9fb;
+  --color-gray-bg: #f1edf5;
+
+  /* 原 --radius-sm(6px)/--radius-lg(12px)。阴影 2026-07-18 起以 radar 为主:
+     取值即 Tailwind shadow-sm/md/lg 默认——radar 卡片/弹层的原生观感,
+     studio 组件经这些 token 统一跟随。 */
+  --radius-ctl: 6px;
+  --radius-card: 8px;
+  --shadow-card-sm: 0 1px 2px rgb(52 41 87 / 0.05), 0 8px 24px rgb(52 41 87 / 0.025);
+  --shadow-card: 0 10px 28px rgb(52 41 87 / 0.07);
+  --shadow-card-lg: 0 18px 46px rgb(52 41 87 / 0.1);
+
+  --font-sans:
+    ui-sans-serif, system-ui, -apple-system, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei UI',
+    sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', 'Menlo', 'Monaco', monospace;
+  /* 被 FbComments 引用 */
+  --font-serif:
+    'Iowan Old Style', 'Charter', 'Source Serif Pro', 'Hoefler Text', Georgia, serif;
+}
+
+/* ── studio 作用域内的排版与元素规则 ─────────────────────────────── */
+[data-studio] {
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+@layer base {
+  [data-studio] input:focus,
+  [data-studio] button:focus,
+  [data-studio] textarea:focus,
+  [data-studio] select:focus {
+    outline: none;
+  }
+
+  [data-studio] input:focus-visible,
+  [data-studio] button:focus-visible,
+  [data-studio] textarea:focus-visible,
+  [data-studio] select:focus-visible,
+  [data-studio] a:focus-visible,
+  [data-studio] [tabindex]:focus-visible {
+    outline: 2px solid color-mix(in srgb, var(--color-ring) 30%, white);
+    outline-offset: 2px;
+  }
+
+  [data-studio] a {
+    color: var(--color-blue);
+    text-decoration: none;
+  }
+}
+
+[data-studio] button {
+  cursor: pointer;
+}
+[data-studio] button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+[data-studio] ::selection {
+  background: var(--color-blue-bg);
+  color: var(--color-foreground);
+}
+
+/* ── 全局:滚动条(统一观感,radar 同享) ──────────────────────────── */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-border-strong);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-muted-foreground-3);
+}
+
+/* ── 动画与浮层(类名 studio 专用,全局声明无冲突) ─────────────────── */
+@keyframes modal-scrim-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes modal-card-in {
+  from { opacity: 0; transform: translateY(8px) scale(0.985); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.modal-scrim-in { animation: modal-scrim-in 150ms ease-out; }
+.modal-card-in  { animation: modal-card-in 180ms cubic-bezier(0.18, 0.74, 0.46, 1); }
+
+/* tiny on-mount reveal */
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.fade-up {
+  animation: fade-up 240ms ease-out both;
+}
+
+/* dialog backdrop with a touch of blur */
+dialog::backdrop {
+  background: rgba(0, 0, 0, 0.28);
+  backdrop-filter: blur(6px);
+}
+
+/* ── Drawer (right-side panel) ─────────────────────────────────────────────
+   Driven by CSS @keyframes with fill-mode: both, so the first painted frame
+   is already at the `from` state — no transition starting-state races. */
+@keyframes drawerPanelIn {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+@keyframes drawerPanelOut {
+  from { transform: translateX(0); }
+  to { transform: translateX(100%); }
+}
+@keyframes drawerBackdropIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes drawerBackdropOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+.drawer-panel-in {
+  animation: drawerPanelIn 200ms cubic-bezier(0.4, 0, 0.2, 1) both;
+  will-change: transform;
+}
+.drawer-panel-out {
+  animation: drawerPanelOut 200ms cubic-bezier(0.4, 0, 0.2, 1) both;
+  will-change: transform;
+}
+.drawer-backdrop-in {
+  animation: drawerBackdropIn 200ms cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+.drawer-backdrop-out {
+  animation: drawerBackdropOut 200ms cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fade-up,
+  .drawer-panel-in,
+  .drawer-panel-out,
+  .drawer-backdrop-in,
+  .drawer-backdrop-out {
+    animation: none !important;
+  }
+}

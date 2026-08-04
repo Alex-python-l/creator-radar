@@ -1,0 +1,27 @@
+{
+  "name": "creator-radar",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@9.15.0",
+  "engines": {
+    "node": ">=22.0.0",
+    "pnpm": ">=9.0.0"
+  },
+  "scripts": {
+    "dev": "pnpm --filter web dev",
+    "build": "pnpm --filter web build",
+    "start": "pnpm --filter web start",
+    "lint": "pnpm --recursive run lint",
+    "typecheck": "pnpm --recursive run typecheck",
+    "db:push": "pnpm --filter web db:push",
+    "db:studio": "pnpm --filter web db:studio",
+    "db:generate": "pnpm --filter web db:generate"
+  },
+  "pnpm": {
+    "overrides": {
+      "postcss": "8.5.14",
+      "sharp": "0.35.0",
+      "shell-quote": "1.9.0"
+    }
+  }
+}

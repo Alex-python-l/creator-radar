@@ -1,0 +1,103 @@
+@import 'tailwindcss';
+@import './studio.css';
+
+@theme {
+  --color-background: #fbf8f5;
+  --color-foreground: #171827;
+
+  --color-card: #fffdfb;
+  --color-card-foreground: #171827;
+
+  --color-popover: #fffdfb;
+  --color-popover-foreground: #171827;
+
+  --color-primary: #6045c2;
+  --color-primary-foreground: #ffffff;
+
+  --color-secondary: #f1edf8;
+  --color-secondary-foreground: #2f255b;
+
+  --color-muted: #f2eef7;
+  --color-muted-foreground: #716d80;
+
+  --color-accent: #eee9fb;
+  --color-accent-foreground: #3f2e86;
+
+  --color-destructive: hsl(0 84.2% 60.2%);
+  --color-destructive-foreground: hsl(210 40% 98%);
+
+  --color-border: #e2ddea;
+  --color-input: #d8d2e2;
+  --color-ring: #6750d9;
+
+  --color-sidebar: #faf7f3;
+  --color-sidebar-foreground: #4e495a;
+  --color-sidebar-border: #dfd8e6;
+
+  /* 平台徽章 */
+  --color-tiktok: hsl(174 72% 45%);
+  --color-tiktok-foreground: hsl(0 0% 100%);
+  --color-instagram-from: hsl(340 82% 56%);
+  --color-instagram-to: hsl(25 90% 55%);
+  --color-instagram-foreground: hsl(0 0% 100%);
+
+  /* Tier 配色（仪表盘 30K+ / 10K-30K / +2K-24h） */
+  --color-tier-hot: hsl(0 72% 51%);
+  --color-tier-mid: hsl(38 92% 50%);
+  --color-tier-growing: hsl(142 71% 45%);
+
+  --radius: 0.5rem;
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family:
+      ui-sans-serif, system-ui, -apple-system, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei UI',
+      sans-serif;
+  }
+}
+
+/* ── 登录页专用样式(勿全局化) ────────────────────────────────── */
+@keyframes login-enter {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes auth-art-enter {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes botanical-drift {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(-1deg); }
+  50% { transform: translate3d(8px, -7px, 0) rotate(1deg); }
+}
+@keyframes botanical-sway {
+  0%, 100% { transform: rotate(-1.2deg); }
+  50% { transform: rotate(1.2deg); }
+}
+.auth-art-enter {
+  animation: auth-art-enter 160ms ease-out both;
+}
+.botanical-drift {
+  animation: botanical-drift 14s ease-in-out infinite;
+  transform-origin: center;
+  will-change: transform;
+}
+.botanical-sway {
+  animation: botanical-sway 12s ease-in-out infinite;
+  transform-origin: bottom center;
+  will-change: transform;
+}
+@media (prefers-reduced-motion: reduce) {
+  .login-enter,
+  .auth-art-enter,
+  .botanical-drift,
+  .botanical-sway {
+    animation: none !important;
+    transform: none !important;
+  }
+}

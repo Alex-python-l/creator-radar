@@ -1,0 +1,12 @@
+{
+  "ignoreDependencies": [
+    "eslint-config-next"
+  ],
+  "workspaces": {
+    "apps/web": {
+      "ignore": [
+        "scripts/**"
+      ]
+    }
+  }
+}

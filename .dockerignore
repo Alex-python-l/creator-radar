@@ -1,0 +1,17 @@
+**/node_modules
+**/.next
+**/.turbo
+.git
+.github
+.claude
+Design
+docs
+apps/scraper
+**/*.tsbuildinfo
+**/.env
+**/.env.local
+.env.cvm
+**/*.db
+**/*.db.bak*
+**/__pycache__
+.DS_Store

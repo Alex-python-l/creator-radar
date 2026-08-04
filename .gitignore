@@ -1,0 +1,80 @@
+# Node / pnpm
+node_modules/
+.pnpm-store/
+pnpm-debug.log*
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Next.js
+.next/
+out/
+.vercel/
+*.tsbuildinfo
+next-env.d.ts
+
+# Vite / frontend build caches
+dist/
+.vite/
+
+# Turbo (if added later)
+.turbo/
+
+# Test / coverage
+coverage/
+
+# Python (scraper service)
+__pycache__/
+*.py[cod]
+*.so
+*.egg
+*.egg-info/
+.venv/
+venv/
+env/
+ENV/
+.python-version
+__pypackages__/
+.ruff_cache/
+.mypy_cache/
+.pytest_cache/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# One-off local import archives
+RPA-watchdog-main*.zip
+
+# Local databases / dumps
+*.db
+*.db-*
+*.sqlite
+*.sqlite3
+# SQLite backups from Postgres migration
+apps/web/*.db.bak*
+
+# Logs
+*.log
+
+# Secrets
+.env
+.env.local
+.env.*.local
+.env.cvm
+!.env.example
+.omx/
+
+# Claude Code local state (agent worktrees, settings)
+.claude/
+
+# Proxy lists (contain credentials)
+kookeey_proxies.txt
+*_proxies.txt
