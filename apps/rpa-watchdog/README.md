@@ -136,8 +136,12 @@ GeeLark Bearer token。
 
 ## 视频黑名单
 
-`/api/rpa/start` 会检查 `paramMap["视频链接"]`。黑名单只由管理员手动维护，
-命中时返回 HTTP 409，且不会调用 GeeLark：
+`/api/rpa/start` 会原子占用 `paramMap["视频链接"]`：GeeLark 明确拒绝创建或网络请求
+失败时撤销占用；任务创建成功后保留黑名单记录。若 GeeLark 返回成功但缺少 `taskId`，
+因为任务可能已经创建，也会保留记录，避免重复执行。后续相同视频返回 HTTP 409，
+且不会再次调用 GeeLark。
+
+管理员仍可手动维护黑名单：
 
 ```bash
 cd apps/rpa-watchdog

@@ -108,7 +108,16 @@ class VideoBlacklist:
                 key=lambda item: str(item.get("addedAt", "")),
             )
 
-    def add(self, video_url: str, note: str = "") -> tuple[bool, dict[str, Any]]:
+    def add(
+        self,
+        video_url: str,
+        note: str = "",
+        *,
+        source: str = "manual",
+        device_id: str | None = None,
+        flow_id: str | None = None,
+        reservation_id: str | None = None,
+    ) -> tuple[bool, dict[str, Any]]:
         normalized = normalize_video_url(video_url)
         with self._locked_file() as file:
             existing = self._active_records(file).get(normalized.key)
@@ -124,17 +133,36 @@ class VideoBlacklist:
             }
             if note.strip():
                 record["note"] = note.strip()
+            if source.strip():
+                record["source"] = source.strip()
+            if device_id is not None and device_id.strip():
+                record["deviceId"] = device_id.strip()
+            if flow_id is not None and flow_id.strip():
+                record["flowId"] = flow_id.strip()
+            if reservation_id is not None and reservation_id.strip():
+                record["reservationId"] = reservation_id.strip()
             file.seek(0, 2)
             file.write(json.dumps(record, ensure_ascii=False) + "\n")
             file.flush()
             return True, record
 
-    def remove(self, video_url: str) -> tuple[bool, dict[str, Any] | None]:
+    def remove(
+        self,
+        video_url: str,
+        *,
+        expected_reservation_id: str | None = None,
+        reason: str = "",
+    ) -> tuple[bool, dict[str, Any] | None]:
         normalized = normalize_video_url(video_url)
         with self._locked_file() as file:
             existing = self._active_records(file).get(normalized.key)
             if existing is None:
                 return False, None
+            if (
+                expected_reservation_id is not None
+                and existing.get("reservationId") != expected_reservation_id
+            ):
+                return False, existing
 
             record = {
                 "action": "remove",
@@ -142,6 +170,10 @@ class VideoBlacklist:
                 "videoUrl": normalized.url,
                 "removedAt": datetime.now(timezone.utc).isoformat(),
             }
+            if reason.strip():
+                record["reason"] = reason.strip()
+            if expected_reservation_id is not None:
+                record["reservationId"] = expected_reservation_id
             file.seek(0, 2)
             file.write(json.dumps(record, ensure_ascii=False) + "\n")
             file.flush()
