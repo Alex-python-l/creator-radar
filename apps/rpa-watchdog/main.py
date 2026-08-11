@@ -953,29 +953,39 @@ async def start_rpa(payload: StartRpaIn, request: Request) -> dict[str, Any]:
     assert geelark_client is not None
     api_token = request.state.geelark_token
     video_url = payload.paramMap.get("视频链接")
+    blacklist_record: dict[str, Any] | None = None
+    reservation_id: str | None = None
     if video_url is not None:
         if not isinstance(video_url, str) or not video_url.strip():
             raise HTTPException(
                 status_code=422,
                 detail="paramMap.视频链接 必须是非空字符串",
             )
+        reservation_id = str(uuid.uuid4())
         try:
-            blocked_record = video_blacklist.find(video_url)
+            added, blacklist_record = video_blacklist.add(
+                video_url,
+                "RPA 创建前自动占用；创建成功后永久保留",
+                source="automatic_rpa_start",
+                device_id=payload.deviceId,
+                flow_id=payload.flowId,
+                reservation_id=reservation_id,
+            )
         except InvalidVideoUrl as exc:
             raise HTTPException(status_code=422, detail=str(exc)) from exc
         except RuntimeError as exc:
-            logger.exception("读取视频黑名单失败")
+            logger.exception("写入视频黑名单失败")
             raise HTTPException(
                 status_code=500,
-                detail=f"读取视频黑名单失败：{exc}",
+                detail=f"写入视频黑名单失败：{exc}",
             ) from exc
 
-        if blocked_record is not None:
+        if not added:
             logger.warning(
                 "视频链接命中黑名单，拒绝创建RPA deviceId=%s flowId=%s videoKey=%s videoUrl=%s",
                 payload.deviceId,
                 payload.flowId,
-                blocked_record.get("videoKey"),
+                blacklist_record.get("videoKey"),
                 video_url,
             )
             raise HTTPException(
@@ -983,8 +993,33 @@ async def start_rpa(payload: StartRpaIn, request: Request) -> dict[str, Any]:
                 detail={
                     "code": "VIDEO_BLACKLISTED",
                     "message": "该视频链接已加入黑名单，未调用 GeeLark",
-                    "record": blocked_record,
+                    "record": blacklist_record,
                 },
+            )
+
+    def rollback_video_reservation(reason: str) -> None:
+        if not isinstance(video_url, str) or reservation_id is None:
+            return
+        try:
+            removed, current_record = video_blacklist.remove(
+                video_url,
+                expected_reservation_id=reservation_id,
+                reason=reason,
+            )
+        except RuntimeError:
+            logger.exception(
+                "撤销视频自动占用失败 deviceId=%s flowId=%s videoUrl=%s",
+                payload.deviceId,
+                payload.flowId,
+                video_url,
+            )
+            return
+        if not removed:
+            logger.warning(
+                "视频自动占用未撤销，记录已变化 deviceId=%s flowId=%s videoKey=%s",
+                payload.deviceId,
+                payload.flowId,
+                current_record.get("videoKey") if current_record is not None else None,
             )
 
     try:
@@ -996,9 +1031,11 @@ async def start_rpa(payload: StartRpaIn, request: Request) -> dict[str, Any]:
             api_token=api_token,
         )
     except GeeLarkNetworkError as exc:
+        rollback_video_reservation("geelark_network_error")
         raise HTTPException(status_code=502, detail=str(exc)) from exc
 
     if not result.ok:
+        rollback_video_reservation("geelark_rejected_creation")
         raise HTTPException(status_code=502, detail=result.to_dict())
 
     task_id = extract_created_task_id(result)
@@ -1035,6 +1072,7 @@ async def start_rpa(payload: StartRpaIn, request: Request) -> dict[str, Any]:
         "flowId": payload.flowId,
         "task": data,
         "response": result.to_dict(),
+        "videoBlacklist": blacklist_record,
         "message": ("RPA 已创建，启动超时计时已立即开始；无需等待第一个用户名心跳"),
     }
 

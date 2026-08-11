@@ -31,6 +31,7 @@ def test_video_blacklist_lifecycle() -> None:
         )
         assert added is True
         assert record["videoKey"] == "tiktok:123456789"
+        assert record["source"] == "manual"
 
         duplicate, duplicate_record = blacklist.add("https://tiktok.com/@other/video/123456789")
         assert duplicate is False
@@ -45,3 +46,30 @@ def test_video_blacklist_lifecycle() -> None:
 
         events = [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines()]
         assert [event["action"] for event in events] == ["add", "remove"]
+
+
+def test_remove_only_rolls_back_matching_reservation() -> None:
+    with tempfile.TemporaryDirectory() as directory:
+        blacklist = VideoBlacklist(Path(directory) / "ignored.jsonl")
+        added, _ = blacklist.add(
+            "https://www.tiktok.com/@first/video/123456789",
+            source="automatic_rpa_start",
+            reservation_id="reservation-a",
+        )
+        assert added is True
+
+        removed, current = blacklist.remove(
+            "https://www.tiktok.com/@first/video/123456789",
+            expected_reservation_id="reservation-b",
+        )
+        assert removed is False
+        assert current is not None
+        assert current["reservationId"] == "reservation-a"
+
+        removed, _ = blacklist.remove(
+            "https://www.tiktok.com/@first/video/123456789",
+            expected_reservation_id="reservation-a",
+            reason="test rollback",
+        )
+        assert removed is True
+        assert blacklist.list() == []
